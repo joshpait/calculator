@@ -7,14 +7,19 @@
 
 .calculator {
     width: 400px;
-    height: 600px;
-    border: 2px;
+    height: 325px;
+    border: 2px solid;
+    border-radius: 20px;
+    padding: 10px 10px;
 }
 
 .screen {
     padding: 10px 20px;
     border: 2px solid;
+    border-radius: 10px;
     margin-bottom: 20px;
+    text-align: end;
+    font-size: 32px;
 }
 
 .buttons-grid {
@@ -25,6 +30,7 @@
 
 .btn {
     font-size: 32px;
+    border-radius: 20px;
 }
 
 .grid-span2 {
