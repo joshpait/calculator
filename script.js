@@ -1,10 +1,9 @@
-let currentNumber = '';
-let previousNumber = '';
-let operator = '';
-let shouldReset = false;
+let currentNumber = ''; // current number button pressed
+let previousNumber = ''; // previous operation result
+let operator = ''; // operators
+let shouldReset = false; 
 
 const currentNumberDisplay = document.querySelector('.current-number');
-const previousNumberDisplay = document.querySelector('.previous-number');
 
 const clearButton = document.querySelector('.clear-button');
 const deleteButton = document.querySelector('.delete-button');
@@ -34,13 +33,15 @@ deleteButton.addEventListener('click', () => {
 })
 
 equalsButton.addEventListener('click', () => {
-    displayResult();
+    handleEqual();
 })
 
 function clear() {
     currentNumber = '';
     previousNumber = '';
     operator = '';
+    shouldReset = false;
+    currentNumberDisplay.textContent = '0';
 }
 
 function del(number) {
@@ -54,9 +55,8 @@ function handleNumber(number) {
 }
 
 function handleOperator(op) {
-    operator = op;
     previousNumber = currentNumber;
-    currentNumber = '';
+    operator = op;
     shouldReset = true;
 }
 
@@ -73,14 +73,15 @@ function operate() {
     } else if (operator === "/") {
         return divide(previousNumber, currentNumber);
     }
-
 }
 
-function displayResult () {
+function handleEqual() {
     currentNumberDisplay.textContent = operate();
-    currentNumber = '';
-    previousNumber = '';
-    operator = '';
+    previousNumber = currentNumberDisplay.textContent;
+}
+
+function handleDisplay() {
+    currentNumberDisplay.textContent = previousNumber;
 }
 
 function add(a, b) {
