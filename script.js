@@ -1,6 +1,6 @@
-let currentNumber = ''; // current number button pressed
-let previousNumber = ''; // previous operation result
-let operator = ''; // operators
+let firstOperand = ''; // current number button pressed
+let secondOperand = ''; // previous operation result
+let operator = null; // operators
 let shouldReset = false; 
 
 const currentNumberDisplay = document.querySelector('.current-number');
@@ -24,64 +24,92 @@ operatorButtons.forEach(button => {
     })
 })
 
-clearButton.addEventListener('click', () => {
-    clear();
-})
-
-deleteButton.addEventListener('click', () => {
-    del(currentNumber);
-})
-
-equalsButton.addEventListener('click', () => {
-    handleEqual();
-})
-
-function clear() {
-    currentNumber = '';
-    previousNumber = '';
-    operator = '';
-    shouldReset = false;
-    currentNumberDisplay.textContent = '0';
-}
-
-function del(number) {
-    currentNumber = number.slice(0, -1);
-    currentNumberDisplay.textContent = currentNumber;
-}
+window.addEventListener('keydown', handleKeyboardInput);
+clearButton.addEventListener('click', clear);
+deleteButton.addEventListener('click', del);
+decimalButton.addEventListener('click', handleDecimal)
+equalsButton.addEventListener('click', handleEqual);
 
 function handleNumber(number) {
-    currentNumber += number;
-    currentNumberDisplay.textContent = currentNumber;
+    if (currentNumberDisplay.textContent === '0' || shouldReset) {
+        resetScreen();
+    }
+    currentNumberDisplay.textContent += number;
 }
 
 function handleOperator(op) {
-    previousNumber = currentNumber;
+    if (operator !== null) {
+        handleEqual();
+    }
+    firstOperand = currentNumberDisplay.textContent;
     operator = op;
     shouldReset = true;
 }
 
-function operate() {
-    previousNumber = Number(previousNumber);
-    currentNumber = Number(currentNumber);
+function handleDecimal () {
+    if (shouldReset) { resetScreen(); }
+    if (currentNumberDisplay === '') { currentNumberDisplay.textContent = '0'}
+    if (currentNumberDisplay.textContent.includes('.')) { return }
 
-    if (operator === "+") {
-        return add(previousNumber, currentNumber);
-    } else if (operator === "-") {
-        return subtract(previousNumber, currentNumber);
-    } else if (operator === "*") {
-        return multiply(previousNumber, currentNumber);
-    } else if (operator === "/") {
-        return divide(previousNumber, currentNumber);
-    }
+    currentNumberDisplay.textContent += '.';
+}
+
+function clear() {
+    currentNumberDisplay.textContent = 0;
+    firstOperand = '';
+    secondOperand = '';
+    operator = null;
+}
+
+function del() {
+    currentNumberDisplay.textContent = currentNumberDisplay.textContent
+                                        .toString()
+                                        .slice(0, -1);
+}
+
+function resetScreen() {
+    currentNumberDisplay.textContent = '';
+    shouldReset = false;
 }
 
 function handleEqual() {
-    currentNumberDisplay.textContent = operate();
-    previousNumber = currentNumberDisplay.textContent;
+    if (operator === '/' && currentNumberDisplay.textContent === '0') {
+        alert("You can't divide by zero!");
+        return;
+    }
+    secondOperand = currentNumberDisplay.textContent;
+    currentNumberDisplay.textContent = roundResult(operate(operator, firstOperand, secondOperand));
+    operator = null;
 }
 
-function handleDisplay() {
-    currentNumberDisplay.textContent = previousNumber;
+function roundResult(number) {
+    return Math.round(number * 1000) / 1000
+}
+
+function handleKeyboardInput(e) {
+    if (e.key >= 0 && e.key <= 9) { handleNumber(e.key) }
+    if (e.key === '.') { handleDecimal()} 
+    if (e.key === '=' || e.key === 'Enter') { handleEqual() }
+    if (e.key === 'Backspace') { del() }
+    if (e.key === 'Escape') { clear() }
+    if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+        handleOperator(e.key)
+    }
+}
+
+function operate(operator, firstOperand, secondOperand) {
+    firstOperand = Number(firstOperand);
+    secondOperand = Number(secondOperand);
+
+    if (operator === "+") {
+        return add(firstOperand, secondOperand);
+    } else if (operator === "-") {
+        return subtract(firstOperand, secondOperand);
+    } else if (operator === "*") {
+        return multiply(firstOperand, secondOperand);
+    } else if (operator === "/") {
+        return divide(firstOperand, secondOperand);
+    }
 }
 
 function add(a, b) {
