@@ -3,6 +3,7 @@ let previousNumber = ''; // previous operation result
 let operator = null; // operators
 let shouldReset = false; 
 let shouldOperate = false;
+let maxDecimal = false;
 
 const currentNumberDisplay = document.querySelector('.current-number');
 
@@ -13,6 +14,7 @@ const operatorButtons = document.querySelectorAll('.op');
 const decimalButton = document.querySelector('.decimal-button');
 const equalsButton = document.querySelector('.equals-button');
 
+window.addEventListener('keydown', handleKeyboardInput);
 numberButtons.forEach(button => {
     button.addEventListener('click', () => {
         handleNumber(button.textContent);
@@ -37,12 +39,17 @@ equalsButton.addEventListener('click', () => {
     handleEqual();
 })
 
+decimalButton.addEventListener('click', () => {
+    handleDecimal();
+})
+
 function clear() {
     currentNumber = '';
     previousNumber = '';
     operator = '';
     shouldReset = false;
     shouldOperate = false;
+    maxDecimal = false;
     currentNumberDisplay.textContent = '';
 }
 
@@ -54,7 +61,7 @@ function del(number) {
 function handleNumber(number) {
     if (shouldReset) {
         currentNumber = '';
-        currentNumberDisplay.textContent = currentNumber;
+        shouldReset = false;
         shouldOperate = true;
     }
     currentNumber += number;
@@ -66,9 +73,11 @@ function handleOperator(op) {
         previousNumber = operate();
         currentNumberDisplay.textContent = previousNumber;
         operator = op;
+        maxDecimal = false;
     } else {
         previousNumber = currentNumber;
         operator = op;
+        maxDecimal = false;
         shouldReset = true;
     }
 }
@@ -93,15 +102,29 @@ function operate() {
     }
 }
 
+function handleDecimal() {
+    if (!maxDecimal) {
+        currentNumber += '.';
+        currentNumberDisplay.textContent = currentNumber;
+        maxDecimal = true;
+    }
+}
+
 function handleEqual() {
     currentNumber = operate();
     currentNumberDisplay.textContent = currentNumber;
     shouldOperate = false;
 }
 
-// function handleDisplay() {
-//     currentNumberDisplay.textContent = previousNumber;
-// }
+function handleKeyboardInput(e) {
+    if (e.key >= 0 && e.key <= 9) handleNumber(e.key);
+    if (e.key === '.') handleDecimal();
+    if (e.key === '=' || e.key === 'Enter') handleEqual();
+    if (e.key === 'Backspace') del();
+    if (e.key === 'Escape') clear();
+    if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/')
+      handleOperator(e.key);
+  }
 
 function add(a, b) {
     return a + b;
