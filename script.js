@@ -1,6 +1,6 @@
-let currentNumber = ''; // current number button pressed
-let previousNumber = ''; // previous operation result
-let operator = ''; // operators
+let firstOperand = ''; // current number button pressed
+let secondOperand = ''; // previous operation result
+let operator = null; // operators
 let shouldReset = false; 
 let shouldOperate = false;
 
