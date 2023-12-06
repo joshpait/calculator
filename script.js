@@ -2,6 +2,7 @@ let currentNumber = ''; // current number button pressed
 let previousNumber = ''; // previous operation result
 let operator = ''; // operators
 let shouldReset = false; 
+let shouldOperate = false;
 
 const currentNumberDisplay = document.querySelector('.current-number');
 
@@ -41,7 +42,8 @@ function clear() {
     previousNumber = '';
     operator = '';
     shouldReset = false;
-    currentNumberDisplay.textContent = '0';
+    shouldOperate = false;
+    currentNumberDisplay.textContent = '';
 }
 
 function del(number) {
@@ -50,14 +52,25 @@ function del(number) {
 }
 
 function handleNumber(number) {
+    if (shouldReset) {
+        currentNumber = '';
+        currentNumberDisplay.textContent = currentNumber;
+        shouldOperate = true;
+    }
     currentNumber += number;
     currentNumberDisplay.textContent = currentNumber;
 }
 
 function handleOperator(op) {
-    previousNumber = currentNumber;
-    operator = op;
-    shouldReset = true;
+    if (shouldOperate) {
+        previousNumber = operate();
+        currentNumberDisplay.textContent = previousNumber;
+        operator = op;
+    } else {
+        previousNumber = currentNumber;
+        operator = op;
+        shouldReset = true;
+    }
 }
 
 function operate() {
@@ -71,18 +84,24 @@ function operate() {
     } else if (operator === "*") {
         return multiply(previousNumber, currentNumber);
     } else if (operator === "/") {
-        return divide(previousNumber, currentNumber);
+        if (currentNumber === 0) {
+            alert("Can't divide by zero! Please try again.");
+            return;
+        } else {
+            return divide(previousNumber, currentNumber);
+        }
     }
 }
 
 function handleEqual() {
-    currentNumberDisplay.textContent = operate();
-    previousNumber = currentNumberDisplay.textContent;
+    currentNumber = operate();
+    currentNumberDisplay.textContent = currentNumber;
+    shouldOperate = false;
 }
 
-function handleDisplay() {
-    currentNumberDisplay.textContent = previousNumber;
-}
+// function handleDisplay() {
+//     currentNumberDisplay.textContent = previousNumber;
+// }
 
 function add(a, b) {
     return a + b;
@@ -99,4 +118,3 @@ function multiply(a, b) {
 function divide(a, b) {
     return a / b;
 }
-
