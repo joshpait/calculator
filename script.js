@@ -31,19 +31,20 @@ function appendNumber(number) {
 }
 
 function appendDecimal() {
-    if (decimalCount >= 1) {
-        return;
-    } else {
-        currentNumberDisplay.textContent += '.'
-        decimalCount++;
+    if (shouldResetScreen) resetScreen();
+    if (currentNumberDisplay.textContent === '') {
+        currentNumberDisplay.textContent += '0';
     }
+    if (currentNumberDisplay.textContent.includes('.')) return;
+    currentNumberDisplay.textContent += '.';
 }
 
 function setOperation(operator) {
-    if (currentOperator !== null) operate();
+    if (currentOperator !== null) evaluate();
     firstOperand = currentNumberDisplay.textContent;
     currentOperator = operator;
     shouldResetScreen = true;
+    decimalCount = 0;
 }
 
 function evaluate() {
