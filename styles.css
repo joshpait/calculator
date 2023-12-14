@@ -57,7 +57,8 @@ h1 {
     font-weight: bold;
     color:#17202A;
     border-radius: 20px;
-    border: 1px solid #ABB2B9;
+    border: none;
+    filter: drop-shadow(2px 3px 1px #ABB2B9);
 }
 
 .grid-span2 {
